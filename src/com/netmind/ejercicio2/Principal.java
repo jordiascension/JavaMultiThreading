@@ -10,21 +10,22 @@ import java.util.concurrent.Future;
 public class Principal {
 	public static void main(String[] args) {
 		Instant start = Instant.now();
+		System.out.println(Thread.currentThread().getName());
+
+		ExecutorService servicio = Executors.newFixedThreadPool(1);
+
+		Future<Integer> resultado = servicio.submit(new MiCallable());
+		// https://gustavopeiretti.com/java-executorservice/
+		// https://www.arquitecturajava.com/java-parallel-stream-y-rendimiento/
+
+		while (!resultado.isDone()) {
+			System.out.println(Thread.currentThread().getName());
+			System.out.println("Running Long Work");
+		}
+
 		try {
-			ExecutorService servicio = Executors.newFixedThreadPool(1);
-
-			Future<Integer> resultado = servicio.submit(new MiCallable());
-			// https://gustavopeiretti.com/java-executorservice/
-			// https://www.arquitecturajava.com/java-parallel-stream-y-rendimiento/
-			while (!resultado.isDone()) {
-				System.out.println("Running Long Work");
-			}
-
 			System.out.println("Get executed: " + resultado.get());
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ExecutionException e) {
+		} catch (InterruptedException | ExecutionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
